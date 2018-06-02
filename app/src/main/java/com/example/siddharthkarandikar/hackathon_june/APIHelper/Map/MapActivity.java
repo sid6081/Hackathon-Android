@@ -180,6 +180,7 @@ public class MapActivity extends FragmentActivity implements PlaceSelectionListe
                                                         Log.d("ERROR_RESPONSE", " : S : " + throwable.getLocalizedMessage());
                                                     }
                                             );
+                                    pw.dismiss();
                                 }
                             });
 

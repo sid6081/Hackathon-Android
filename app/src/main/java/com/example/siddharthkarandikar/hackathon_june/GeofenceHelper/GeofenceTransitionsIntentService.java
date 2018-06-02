@@ -40,7 +40,6 @@ public class GeofenceTransitionsIntentService extends IntentService {
             List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
             Toast.makeText(getApplicationContext(), "Geofence Entered", Toast.LENGTH_SHORT).show();
             vibrate();
-
         } else {
             // Log the error.
             Toast.makeText(getApplicationContext(), "Geofence Transition Mismatch : " + geofenceTransition, Toast.LENGTH_SHORT).show();
