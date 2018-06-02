@@ -2,23 +2,18 @@ package com.example.siddharthkarandikar.hackathon_june.APIHelper.Map;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
 import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.Gravity;
@@ -37,18 +32,16 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class MapActivity extends FragmentActivity implements PlaceSelectionListener {
 
@@ -110,7 +103,7 @@ public class MapActivity extends FragmentActivity implements PlaceSelectionListe
     private void requestSmsPermission(Activity activity) {
         if (ActivityCompat.checkSelfPermission(activity.getApplicationContext(), Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(activity,
-                    new String[]{Manifest.permission.SEND_SMS},
+                    new String[]{Manifest.permission.READ_PHONE_STATE, Manifest.permission.SEND_SMS},
                     10);
         } else {
             smsPermissionGranted = true;
@@ -223,8 +216,8 @@ public class MapActivity extends FragmentActivity implements PlaceSelectionListe
 
                                     MapBody requestBody = new MapBody();
                                     requestBody.setName(place.getName().toString());
-                                    requestBody.setLatitude(place.getLatLng().latitude+"");
-                                    requestBody.setLongitude(place.getLatLng().longitude+"");
+                                    requestBody.setLatitude(place.getLatLng().latitude + "");
+                                    requestBody.setLongitude(place.getLatLng().longitude + "");
                                     requestBody.setSafetyRating(ratingEditText.getText().toString());
 
                                     hackathonService.safetyRating(requestBody)
