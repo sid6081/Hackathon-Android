@@ -7,6 +7,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -15,7 +21,12 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.telephony.SmsManager;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
@@ -164,39 +175,86 @@ public class MapActivity extends FragmentActivity implements PlaceSelectionListe
     @Override
     public void onPlaceSelected(Place place) {
 
-        okHttpClient = new OkHttpClient();
+        AlertDialog.Builder builder;
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            builder = new AlertDialog.Builder(getApplicationContext(), android.R.style.Theme_Material_Dialog_Alert);
+//        } else {
+//            builder = new AlertDialog.Builder(getApplicationContext());
+//        }
+        builder = new AlertDialog.Builder(MapActivity.this);
+        builder.setTitle("Rate this place")
+                .setMessage("Do you want to rate this place?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
 
-        okHttpClient.newBuilder()
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(30, TimeUnit.SECONDS)
-                .build();
+                        try {
+                            //We need to get the instance of the LayoutInflater, use the context of this activity
+                            LayoutInflater inflater = (LayoutInflater) MapActivity.this
+                                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                            //Inflate the view from a predefined XML layout
+                            View layout = inflater.inflate(R.layout.pop_layout,
+                                    (ViewGroup) findViewById(R.id.popup_element));
+                            // create a 300px width and 470px height PopupWindow
+                            PopupWindow pw = new PopupWindow(layout, 300, 470, true);
+                            // display the popup in the center
+                            pw.showAtLocation(getCurrentFocus(), Gravity.CENTER, 0, 0);
 
-        retrofit = new Retrofit.Builder()
-                .client(okHttpClient)
-                .baseUrl("http://192.168.1.8:8005/")
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+                            EditText ratingEditText = layout.findViewById(R.id.ratingpopup);
+                            Button submitButton = layout.findViewById(R.id.end_data_send_button);
+                            submitButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    okHttpClient = new OkHttpClient();
 
-        hackathonService = retrofit.create(HackathonService.class);
+                                    okHttpClient.newBuilder()
+                                            .connectTimeout(30, TimeUnit.SECONDS)
+                                            .readTimeout(30, TimeUnit.SECONDS)
+                                            .writeTimeout(30, TimeUnit.SECONDS)
+                                            .build();
 
-        MapBody requestBody = new MapBody();
-        requestBody.setName(place.getName().toString());
-        requestBody.setLatitude(place.getLatLng().latitude + "");
-        requestBody.setLongitude(place.getLatLng().longitude + "");
-        requestBody.setSafetyRating("3");
+                                    retrofit = new Retrofit.Builder()
+                                            .client(okHttpClient)
+                                            .baseUrl("http://192.168.1.8:8005/")
+                                            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                                            .addConverterFactory(GsonConverterFactory.create())
+                                            .build();
 
-        hackathonService.safetyRating(requestBody)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(mapDataPointResponse -> {
-                            map.goToLocationWithLatLong(place.getLatLng().latitude, place.getLatLng().longitude);
-                            map.createGeofenceLatLong(place.getLatLng().latitude, place.getLatLng().longitude, 3);
-                        }, throwable -> {
-                            Log.d("ERROR_RESPONSE", " : S : " + throwable.getLocalizedMessage());
+                                    hackathonService = retrofit.create(HackathonService.class);
+
+                                    MapBody requestBody = new MapBody();
+                                    requestBody.setName(place.getName().toString());
+                                    requestBody.setLatitude(place.getLatLng().latitude+"");
+                                    requestBody.setLongitude(place.getLatLng().longitude+"");
+                                    requestBody.setSafetyRating(ratingEditText.getText().toString());
+
+                                    hackathonService.safetyRating(requestBody)
+                                            .subscribeOn(Schedulers.io())
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .subscribe(mapDataPointResponse -> {
+                                                        map.goToLocationWithLatLong(place.getLatLng().latitude, place.getLatLng().longitude);
+                                                        map.createGeofenceLatLong(place.getLatLng().latitude, place.getLatLng().longitude, Integer.parseInt(ratingEditText.getText().toString()));
+                                                    }, throwable -> {
+                                                        Log.d("ERROR_RESPONSE", " : S : " + throwable.getLocalizedMessage());
+                                                    }
+                                            );
+                                    pw.dismiss();
+                                }
+                            });
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                );
+
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                        map.goToLocationWithLatLong(place.getLatLng().latitude, place.getLatLng().longitude);
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
     @Override

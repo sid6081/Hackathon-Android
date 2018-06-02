@@ -46,8 +46,8 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.loginButton);
         notRegisteredTextView = findViewById(R.id.notRegisteredTextView);
 
-        emailEditText.setText("sid@y.com");
-        passwordEditText.setText("test");
+        emailEditText.setText("s");
+        passwordEditText.setText("Siddharth");
 
         notRegisteredTextView.setOnClickListener(new View.OnClickListener() {
             @Override

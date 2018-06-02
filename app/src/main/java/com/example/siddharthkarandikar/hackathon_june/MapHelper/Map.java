@@ -82,7 +82,7 @@ public class Map implements OnMapReadyCallback, LocationListener {
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         addLocationMarker(latLng, "Source");
         updateSourceLatLng(latLng);
-        goToLocation(false);
+        //goToLocation(false);
     }
 
     @Override
@@ -330,7 +330,7 @@ public class Map implements OnMapReadyCallback, LocationListener {
             mGeofencingClient = LocationServices.getGeofencingClient(context);
         }
 
-        SimpleGeofence geofence = new SimpleGeofence("Destination", latitude, longitude, 500,
+        SimpleGeofence geofence = new SimpleGeofence("Destination", latitude, longitude, 1000,
                 GEOFENCE_EXPIRATION_IN_MILLISECONDS, Geofence.GEOFENCE_TRANSITION_ENTER);
         addGeofences(geofence);
         int color = Color.YELLOW;
@@ -342,7 +342,8 @@ public class Map implements OnMapReadyCallback, LocationListener {
                 color = Color.MAGENTA;
                 break;
             case 3:
-                color = Color.YELLOW;
+                color = Color.RED;
+                break;
         }
         CircleOptions circleOptions1 = new CircleOptions()
                 .center(new LatLng(geofence.getLatitude(), geofence.getLongitude()))
