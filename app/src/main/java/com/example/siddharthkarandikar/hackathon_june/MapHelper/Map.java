@@ -166,8 +166,9 @@ public class Map implements OnMapReadyCallback, LocationListener {
                 for(int i=0;i<mapDataPointResponse.body().mapResponse.size();i++) {
                     double latitude =  Double.parseDouble(mapDataPointResponse.body().mapResponse.get(i).latitude);
                     double longitude =  Double.parseDouble(mapDataPointResponse.body().mapResponse.get(i).longitude);
+                    int rating = Integer.parseInt(mapDataPointResponse.body().mapResponse.get(i).safetyRating);
                     //goToLocationWithLatLong(latitude, longitude);
-                    createGeofenceLatLong(latitude, longitude);
+                    createGeofenceLatLong(latitude, longitude, rating);
                 }
 //                            Toast.makeText(getApplicationContext(), "HOLA", Toast.LENGTH_SHORT).show();
                 //this.finish();
@@ -324,7 +325,7 @@ public class Map implements OnMapReadyCallback, LocationListener {
         mMap.addCircle(circleOptions1);
     }
 
-    public void createGeofenceLatLong(double latitude, double longitude) {
+    public void createGeofenceLatLong(double latitude, double longitude, int safetyRating) {
         if (mGeofencingClient == null) {
             mGeofencingClient = LocationServices.getGeofencingClient(context);
         }
@@ -332,10 +333,21 @@ public class Map implements OnMapReadyCallback, LocationListener {
         SimpleGeofence geofence = new SimpleGeofence("Destination", latitude, longitude, 500,
                 GEOFENCE_EXPIRATION_IN_MILLISECONDS, Geofence.GEOFENCE_TRANSITION_ENTER);
         addGeofences(geofence);
+        int color = Color.YELLOW;
+        switch (safetyRating) {
+            case 1:
+                color = Color.YELLOW;
+                break;
+            case 2:
+                color = Color.MAGENTA;
+                break;
+            case 3:
+                color = Color.YELLOW;
+        }
         CircleOptions circleOptions1 = new CircleOptions()
                 .center(new LatLng(geofence.getLatitude(), geofence.getLongitude()))
                 .radius(geofence.getRadius()).strokeColor(Color.BLACK)
-                .strokeWidth(2).fillColor(0x500000ff);
+                .strokeWidth(2).fillColor(color);
         mMap.addCircle(circleOptions1);
     }
 

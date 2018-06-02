@@ -108,12 +108,7 @@ public class MapActivity extends FragmentActivity implements PlaceSelectionListe
 
     @Override
     public void onPlaceSelected(Place place) {
-        //        Toast.makeText(this, "Place selection failed: " + place.getAddress(),
-//                Toast.LENGTH_SHORT).show();
-//        map.updateDestLatLng(place.getLatLng());
-//        map.addLocationMarker(place.getLatLng(), "destination");
-//        map.goToLocation(true);
-//        map.createGeofence();
+
         okHttpClient = new OkHttpClient();
 
         okHttpClient.newBuilder()
@@ -142,7 +137,7 @@ public class MapActivity extends FragmentActivity implements PlaceSelectionListe
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mapDataPointResponse -> {
                     map.goToLocationWithLatLong(place.getLatLng().latitude, place.getLatLng().longitude);
-                    map.createGeofenceLatLong(place.getLatLng().latitude, place.getLatLng().longitude);
+                    map.createGeofenceLatLong(place.getLatLng().latitude, place.getLatLng().longitude, 3);
                         }, throwable -> {
                             Log.d("ERROR_RESPONSE", " : S : " + throwable.getLocalizedMessage());
                         }
