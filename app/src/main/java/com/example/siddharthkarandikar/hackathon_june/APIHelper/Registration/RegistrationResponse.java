@@ -12,27 +12,27 @@ import java.util.List;
 public class RegistrationResponse {
 
     @Expose
-    @SerializedName("firstnameEditText")
+    @SerializedName("firstname")
     public String firstname;
 
     @Expose
-    @SerializedName("lastnameEditText")
+    @SerializedName("lastname")
     public String lastname;
 
     @Expose
-    @SerializedName("emailidEditText")
+    @SerializedName("emailid")
     public String emailid;
 
     @Expose
-    @SerializedName("passwordEditText")
+    @SerializedName("password")
     public String password;
 
     @Expose
-    @SerializedName("phoneEditText")
+    @SerializedName("phone")
     public String phone;
 
     @Expose
-    @SerializedName("emergencyContactEditText")
+    @SerializedName("emergencyContact")
     public List<String> emergencyContact;
 
     public String getFirstname() {

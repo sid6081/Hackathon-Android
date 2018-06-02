@@ -25,7 +25,7 @@
                     android:ems="10"
                     android:inputType="textPersonName"
                     android:hint="First Name"
-                    android:id="@+id/firstName"
+                    android:id="@+id/firstname"
                     android:textAlignment="center" />
                 <EditText
                     android:layout_width="match_parent"
@@ -35,8 +35,8 @@
                     android:inputType="textPersonName"
                     android:hint="Last Name"
                     android:textAlignment="center"
-                    android:id="@+id/lastName"
-                    android:layout_below="@id/firstName"/>
+                    android:id="@+id/lastname"
+                    android:layout_below="@id/firstname"/>
 
                 <EditText
                     android:layout_width="match_parent"
@@ -45,8 +45,8 @@
                     android:ems="10"
                     android:inputType=""
                     android:hint="Email Id"
-                    android:id="@+id/emailid"
-                    android:layout_below="@id/lastName"
+                    android:id="@+id/emaild"
+                    android:layout_below="@id/lastname"
                     android:textAlignment="center" />
                 <EditText
                     android:layout_width="match_parent"
@@ -57,7 +57,7 @@
                     android:hint="Password"
                     android:textAlignment="center"
                     android:id="@+id/password"
-                    android:layout_below="@id/emailid"/>
+                    android:layout_below="@id/emaild"/>
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

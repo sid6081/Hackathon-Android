@@ -1,5 +1,6 @@
-package com.example.siddharthkarandikar.hackathon_june.APIHelper.Registration;
+package com.example.siddharthkarandikar.hackathon_june.APIHelper.Login;
 
+import com.example.siddharthkarandikar.hackathon_june.APIHelper.Registration.RegistrationResponse;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -7,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by siddharth.karandikar on 02/06/18.
  */
 
-public class RegistrationResponseMain {
+public class LoginResponseMain {
 
     @Expose
     @SerializedName("status")
@@ -21,11 +22,11 @@ public class RegistrationResponseMain {
     @SerializedName("response")
     public RegistrationResponse registrationResponse;
 
-    public RegistrationResponse getRegistrationResponse() {
+    public RegistrationResponse getLoginResponse() {
         return registrationResponse;
     }
 
-    public void setRegistrationResponse(RegistrationResponse registrationResponse) {
+    public void setLoginResponse(RegistrationResponse registrationResponse) {
         this.registrationResponse = registrationResponse;
     }
 

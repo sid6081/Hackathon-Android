@@ -1,16 +1,19 @@
-package com.example.siddharthkarandikar.hackathon_june.APIHelper.Registration;
+package com.example.siddharthkarandikar.hackathon_june.APIHelper.Login;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.siddharthkarandikar.hackathon_june.APIHelper.HackathonService;
 import com.example.siddharthkarandikar.hackathon_june.APIHelper.Map.MapActivity;
+import com.example.siddharthkarandikar.hackathon_june.APIHelper.Registration.RegisterActivity;
+import com.example.siddharthkarandikar.hackathon_june.APIHelper.Registration.RegistrationBody;
 import com.example.siddharthkarandikar.hackathon_june.R;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
@@ -24,10 +27,11 @@ import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class RegisterActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
-    private Button registerButton;
-    private EditText firstnameEditText, lastnameEditText, emailidEditText, passwordEditText, phoneEditText, emergencyContactEditText;
+    private Button loginButton;
+    private EditText emailEditText, passwordEditText;
+    private TextView notRegisteredTextView;
     private OkHttpClient okHttpClient;
     private Retrofit retrofit;
     private HackathonService hackathonService;
@@ -35,35 +39,31 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        setContentView(R.layout.activity_login);
 
-        firstnameEditText = findViewById(R.id.firstname);
-        lastnameEditText = findViewById(R.id.lastname);
-        emailidEditText = findViewById(R.id.emaild);
-        passwordEditText = findViewById(R.id.password);
-        phoneEditText = findViewById(R.id.phone);
-        emergencyContactEditText = findViewById(R.id.emergencyContact);
-        registerButton = findViewById(R.id.registerButton);
+        emailEditText = findViewById(R.id.emaiIdLogin);
+        passwordEditText = findViewById(R.id.passwordLogin);
+        loginButton = findViewById(R.id.loginButton);
+        notRegisteredTextView = findViewById(R.id.notRegisteredTextView);
 
-        firstnameEditText.setText("Siddharth");
-        lastnameEditText.setText("Siddharth");
-        emailidEditText.setText("s");
-        passwordEditText.setText("Siddharth");
-        phoneEditText.setText("Siddharth");
-        emergencyContactEditText.setText("Siddharth");
+        emailEditText.setText("sid@y.com");
+        passwordEditText.setText("test");
 
-        registerButton.setOnClickListener(new View.OnClickListener() {
+        notRegisteredTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String firstName = firstnameEditText.getText().toString();
-                String lastName = lastnameEditText.getText().toString();
-                String emailId = emailidEditText.getText().toString();
-                String password = passwordEditText.getText().toString();
-                String phone = phoneEditText.getText().toString();
-                String emergency = emergencyContactEditText.getText().toString();
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(intent);
+            }
+        });
 
-                if (firstName.equals("") || lastName.equals("") || emailId.equals("") || password.equals("") || phone.equals("") || emergency.equals("")) {
-                    Toast.makeText(RegisterActivity.this, "All fields are mandatory", Toast.LENGTH_SHORT).show();
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String email = emailEditText.getText().toString();
+                String password = passwordEditText.getText().toString();
+                if(email.equals("") || password.equals("")) {
+                    Toast.makeText(LoginActivity.this, "All fields are mandatory", Toast.LENGTH_SHORT).show();
                 } else {
                     okHttpClient = new OkHttpClient();
 
@@ -82,22 +82,15 @@ public class RegisterActivity extends AppCompatActivity {
 
                     hackathonService = retrofit.create(HackathonService.class);
 
-                    List<String> emergencyContactList = new ArrayList<>();
-                    emergencyContactList.add(emergency);
-
-                    RegistrationBody requestBody = new RegistrationBody();
-                    requestBody.setFirstname(firstName);
-                    requestBody.setLastname(lastName);
-                    requestBody.setEmailid(emailId);
+                    LoginBody requestBody = new LoginBody();
+                    requestBody.setEmailid(email);
                     requestBody.setPassword(password);
-                    requestBody.setPhone(phone);
-                    requestBody.setEmergencyContact(emergencyContactList);
 
-                    hackathonService.registration(requestBody)
+                    hackathonService.login(requestBody)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(mapDataPointResponse -> {
-                                        Intent intent = new Intent(RegisterActivity.this, MapActivity.class);
+                                        Intent intent = new Intent(LoginActivity.this, MapActivity.class);
                                         startActivity(intent);
                                     }, throwable -> {
                                         Log.d("ERROR_RESPONSE", " : S : " + throwable.getLocalizedMessage());
