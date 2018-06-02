@@ -2,6 +2,11 @@ package com.example.siddharthkarandikar.hackathon_june.APIHelper.Map;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,6 +18,8 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -47,9 +54,11 @@ public class MapActivity extends FragmentActivity implements PlaceSelectionListe
 
     private static SharedPreferences sp;
     private static boolean locationPermissionGranted = false, isMapSet = false;
+    private static boolean smsPermissionGranted = false;
     private SupportMapFragment mapFragment;
     private Map map;
     private FloatingActionButton floatingActionButton;
+    private FloatingActionButton shareButton;
     private OkHttpClient okHttpClient;
     private Retrofit retrofit;
     private HackathonService hackathonService;
@@ -64,6 +73,7 @@ public class MapActivity extends FragmentActivity implements PlaceSelectionListe
                 .findFragmentById(R.id.map);
 
         floatingActionButton = findViewById(R.id.fab);
+        shareButton = findViewById(R.id.share_status);
 
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.autocomplete_fragment);
@@ -84,6 +94,44 @@ public class MapActivity extends FragmentActivity implements PlaceSelectionListe
                 map.goToLocation(false);
             }
         });
+
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (smsPermissionGranted) {
+                    sendMessage();
+                } else {
+                    requestSmsPermission(MapActivity.this);
+                }
+            }
+        });
+    }
+
+    private void requestSmsPermission(Activity activity) {
+        if (ActivityCompat.checkSelfPermission(activity.getApplicationContext(), Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.SEND_SMS},
+                    10);
+        } else {
+            smsPermissionGranted = true;
+        }
+    }
+
+    private void sendMessage() {
+//        Intent smsIntent = new Intent(Intent.ACTION_VIEW);
+//        smsIntent.setData(Uri.parse("smsto:"));
+//        smsIntent.setType("vnd.android-dir/mms-sms");
+//        smsIntent.putExtra("address", new String("9740543019"));
+//        smsIntent.putExtra("sms_body", "Test");
+        Log.d("SMS_SENd", "HERE");
+
+        Intent intent = new Intent(getApplicationContext(), MapActivity.class);
+        PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
+
+        SmsManager sms = SmsManager.getDefault();
+
+        //TODO : BRACES : PHONE_NUMBER_HERE
+        sms.sendTextMessage("9886501321", null, "Hi, I have just entered an unsafe area", pi, null);
     }
 
     private static void requestLocationPermission(Activity activity) {
@@ -111,6 +159,15 @@ public class MapActivity extends FragmentActivity implements PlaceSelectionListe
                     Toast.makeText(MapActivity.this, "Permission denied", Toast.LENGTH_SHORT).show();
                 }
                 return;
+            }
+            case 10: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    smsPermissionGranted = true;
+                    sendMessage();
+                } else {
+                    Toast.makeText(MapActivity.this, "Permission denied", Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }
