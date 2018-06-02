@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/popup_element"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="#444444"
+    android:padding="10px"
+    android:orientation="vertical"
+    android:layout_gravity="center">
+
+    <EditText
+        android:id="@+id/ratingpopup"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:hint="Rating (1-3)"
+        android:textColorHint="@color/colorWhite"
+        android:textColor="@color/colorWhite"
+        android:gravity="center"/>
+
+        <Button android:id="@+id/end_data_send_button"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:drawablePadding="3sp"
+            android:layout_gravity="center"
+            android:text="Submit"
+            />
+</LinearLayout>
