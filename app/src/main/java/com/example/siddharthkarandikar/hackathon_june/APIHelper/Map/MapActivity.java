@@ -11,6 +11,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.example.siddharthkarandikar.hackathon_june.APIHelper.HackathonService;
@@ -40,7 +41,10 @@ public class MapActivity extends FragmentActivity implements PlaceSelectionListe
     private SupportMapFragment mapFragment;
     private Map map;
     private FloatingActionButton floatingActionButton;
-
+    private OkHttpClient okHttpClient;
+    private Retrofit retrofit;
+    private HackathonService hackathonService;
+    private PopupWindow popWindow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,12 +108,45 @@ public class MapActivity extends FragmentActivity implements PlaceSelectionListe
 
     @Override
     public void onPlaceSelected(Place place) {
-        Toast.makeText(this, "Place selection failed: " + place.getAddress(),
-                Toast.LENGTH_SHORT).show();
-        map.updateDestLatLng(place.getLatLng());
-        map.addLocationMarker(place.getLatLng(), "destination");
-        map.goToLocation(true);
-        map.createGeofence();
+        //        Toast.makeText(this, "Place selection failed: " + place.getAddress(),
+//                Toast.LENGTH_SHORT).show();
+//        map.updateDestLatLng(place.getLatLng());
+//        map.addLocationMarker(place.getLatLng(), "destination");
+//        map.goToLocation(true);
+//        map.createGeofence();
+        okHttpClient = new OkHttpClient();
+
+        okHttpClient.newBuilder()
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .build();
+
+        retrofit = new Retrofit.Builder()
+                .client(okHttpClient)
+                .baseUrl("http://192.168.1.8:8005/")
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        hackathonService = retrofit.create(HackathonService.class);
+
+        MapBody requestBody = new MapBody();
+        requestBody.setName(place.getName().toString());
+        requestBody.setLatitude(place.getLatLng().latitude+"");
+        requestBody.setLongitude(place.getLatLng().longitude+"");
+        requestBody.setSafetyRating("3");
+
+        hackathonService.safetyRating(requestBody)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(mapDataPointResponse -> {
+                    map.goToLocationWithLatLong(place.getLatLng().latitude, place.getLatLng().longitude);
+                    map.createGeofenceLatLong(place.getLatLng().latitude, place.getLatLng().longitude);
+                        }, throwable -> {
+                            Log.d("ERROR_RESPONSE", " : S : " + throwable.getLocalizedMessage());
+                        }
+                );
     }
 
     @Override

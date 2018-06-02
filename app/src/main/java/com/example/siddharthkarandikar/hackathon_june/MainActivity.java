@@ -2,6 +2,7 @@ package com.example.siddharthkarandikar.hackathon_june;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -9,15 +10,30 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.siddharthkarandikar.hackathon_june.APIHelper.HackathonService;
+import com.example.siddharthkarandikar.hackathon_june.APIHelper.Login.LoginActivity;
+import com.example.siddharthkarandikar.hackathon_june.APIHelper.Login.LoginBody;
+import com.example.siddharthkarandikar.hackathon_june.APIHelper.Map.MapActivity;
+import com.example.siddharthkarandikar.hackathon_june.APIHelper.Map.MapBody;
 import com.example.siddharthkarandikar.hackathon_june.MapHelper.Map;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import okhttp3.OkHttpClient;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends FragmentActivity implements PlaceSelectionListener {
 
@@ -26,6 +42,9 @@ public class MainActivity extends FragmentActivity implements PlaceSelectionList
     private SupportMapFragment mapFragment;
     private Map map;
     private FloatingActionButton floatingActionButton;
+    private OkHttpClient okHttpClient;
+    private Retrofit retrofit;
+    private HackathonService hackathonService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,12 +107,44 @@ public class MainActivity extends FragmentActivity implements PlaceSelectionList
 
     @Override
     public void onPlaceSelected(Place place) {
-        Toast.makeText(this, "Place selection failed: " + place.getAddress(),
-                Toast.LENGTH_SHORT).show();
-        map.updateDestLatLng(place.getLatLng());
-        map.addLocationMarker(place.getLatLng(), "destination");
-        map.goToLocation(true);
-        map.createGeofence();
+//        Toast.makeText(this, "Place selection failed: " + place.getAddress(),
+//                Toast.LENGTH_SHORT).show();
+//        map.updateDestLatLng(place.getLatLng());
+//        map.addLocationMarker(place.getLatLng(), "destination");
+//        map.goToLocation(true);
+//        map.createGeofence();
+        okHttpClient = new OkHttpClient();
+
+        okHttpClient.newBuilder()
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .build();
+
+        retrofit = new Retrofit.Builder()
+                .client(okHttpClient)
+                .baseUrl("http://192.168.1.8:8005/")
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        hackathonService = retrofit.create(HackathonService.class);
+
+        MapBody requestBody = new MapBody();
+        requestBody.setName(place.getName().toString());
+        requestBody.setLatitude(place.getLatLng().latitude+"");
+        requestBody.setLongitude(place.getLatLng().longitude+"");
+        requestBody.setSafetyRating("3");
+
+        hackathonService.safetyRating(requestBody)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(mapDataPointResponse -> {
+
+                        }, throwable -> {
+                            Log.d("ERROR_RESPONSE", " : S : " + throwable.getLocalizedMessage());
+                        }
+                );
     }
 
     @Override

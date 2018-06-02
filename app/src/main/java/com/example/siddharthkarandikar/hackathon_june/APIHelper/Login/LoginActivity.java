@@ -87,15 +87,19 @@ public class LoginActivity extends AppCompatActivity {
                     requestBody.setPassword(password);
 
                     hackathonService.login(requestBody)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(mapDataPointResponse -> {
-                                        Intent intent = new Intent(LoginActivity.this, MapActivity.class);
-                                        startActivity(intent);
-                                    }, throwable -> {
-                                        Log.d("ERROR_RESPONSE", " : S : " + throwable.getLocalizedMessage());
-                                    }
-                            );
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(mapDataPointResponse -> {
+                            if(mapDataPointResponse.body().status.equalsIgnoreCase("success")) {
+                                Intent intent = new Intent(LoginActivity.this, MapActivity.class);
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(LoginActivity.this, "Invalid User Credentials", Toast.LENGTH_SHORT).show();
+                            }
+                            }, throwable -> {
+                                Log.d("ERROR_RESPONSE", " : S : " + throwable.getLocalizedMessage());
+                            }
+                        );
                 }
             }
         });

@@ -159,23 +159,23 @@ public class Map implements OnMapReadyCallback, LocationListener {
         hackathonService = retrofit.create(HackathonService.class);
 
         hackathonService.getMapDatPoints()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(mapDataPointResponse -> {
-                            Log.d("USER_RATING_RESPONSE", " : S : " + mapDataPointResponse.body());
-                            for(int i=0;i<mapDataPointResponse.body().mapResponse.size();i++) {
-                                double latitude =  Double.parseDouble(mapDataPointResponse.body().mapResponse.get(i).latitude);
-                                double longitude =  Double.parseDouble(mapDataPointResponse.body().mapResponse.get(i).longitude);
-                                goToLocationWithLatLong(latitude, longitude);
-                                createGeofenceLatLong(latitude, longitude);
-                            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(mapDataPointResponse -> {
+                Log.d("USER_RATING_RESPONSE", " : S : " + mapDataPointResponse.body());
+                for(int i=0;i<mapDataPointResponse.body().mapResponse.size();i++) {
+                    double latitude =  Double.parseDouble(mapDataPointResponse.body().mapResponse.get(i).latitude);
+                    double longitude =  Double.parseDouble(mapDataPointResponse.body().mapResponse.get(i).longitude);
+                    //goToLocationWithLatLong(latitude, longitude);
+                    createGeofenceLatLong(latitude, longitude);
+                }
 //                            Toast.makeText(getApplicationContext(), "HOLA", Toast.LENGTH_SHORT).show();
-                            //this.finish();
-                        }, throwable -> {
-                            Log.d("ERROR_RESPONSE", " : S : " + throwable.getLocalizedMessage());
+                //this.finish();
+            }, throwable -> {
+                Log.d("ERROR_RESPONSE", " : S : " + throwable.getLocalizedMessage());
 //                            Toast.makeText(getApplicationContext(), "Sorry! There was some error:"+throwable.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                        }
-                );
+            }
+            );
     }
 
     public void populateMapWithSource(Context context, SharedPreferences sp) {

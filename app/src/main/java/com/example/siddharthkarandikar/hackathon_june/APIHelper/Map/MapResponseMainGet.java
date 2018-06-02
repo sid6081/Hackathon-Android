@@ -9,7 +9,7 @@ import java.util.List;
  * Created by siddharth.karandikar on 01/06/18.
  */
 
-public class MapResponseMain {
+public class MapResponseMainGet {
 
     @Expose
     @SerializedName("response")
