@@ -360,7 +360,7 @@ public class Map implements OnMapReadyCallback, LocationListener {
             mGeofencingClient.addGeofences(geofence.getGeofencingRequest(), getGeofencePendingIntent())
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
-                        public void onSuccess(Void aVoid) {
+                        public void onSuccess(Void Void) {
                             Toast.makeText(context, "Geofence Added", Toast.LENGTH_SHORT).show();
                         }
                     })

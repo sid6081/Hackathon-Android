@@ -1,6 +1,7 @@
 package com.example.siddharthkarandikar.hackathon_june.APIHelper.Login;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,6 +36,7 @@ public class LoginActivity extends AppCompatActivity {
     private OkHttpClient okHttpClient;
     private Retrofit retrofit;
     private HackathonService hackathonService;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +50,12 @@ public class LoginActivity extends AppCompatActivity {
 
         emailEditText.setText("s");
         passwordEditText.setText("Siddharth");
+
+        sharedPreferences = getSharedPreferences("Map", MODE_PRIVATE);
+        if(sharedPreferences.getBoolean("UserLoggedIn", false)) {
+            Intent intent = new Intent(LoginActivity.this, MapActivity.class);
+            startActivity(intent);
+        }
 
         notRegisteredTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,6 +99,9 @@ public class LoginActivity extends AppCompatActivity {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(mapDataPointResponse -> {
                             if(mapDataPointResponse.body().status.equalsIgnoreCase("success")) {
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putBoolean("UserLoggedIn", true);
+                                editor.apply();
                                 Intent intent = new Intent(LoginActivity.this, MapActivity.class);
                                 startActivity(intent);
                             } else {

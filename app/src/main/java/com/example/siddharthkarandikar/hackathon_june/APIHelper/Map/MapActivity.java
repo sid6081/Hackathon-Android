@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.example.siddharthkarandikar.hackathon_june.APIHelper.HackathonService;
 import com.example.siddharthkarandikar.hackathon_june.MapHelper.Map;
+import com.example.siddharthkarandikar.hackathon_june.MessageActivity;
 import com.example.siddharthkarandikar.hackathon_june.R;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
@@ -45,7 +46,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MapActivity extends FragmentActivity implements PlaceSelectionListener {
 
-    private static SharedPreferences sp;
+    private SharedPreferences sp;
     private static boolean locationPermissionGranted = false, isMapSet = false;
     private static boolean smsPermissionGranted = false;
     private SupportMapFragment mapFragment;
@@ -78,13 +79,14 @@ public class MapActivity extends FragmentActivity implements PlaceSelectionListe
         if (locationPermissionGranted & !isMapSet) {
             isMapSet = true;
             map = new Map(getApplicationContext(), mapFragment, sp);
-
         }
 
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                map.goToLocation(false);
+                if(map != null) {
+                    map.goToLocation(false);
+                }
             }
         });
 
@@ -118,7 +120,7 @@ public class MapActivity extends FragmentActivity implements PlaceSelectionListe
 //        smsIntent.putExtra("sms_body", "Test");
         Log.d("SMS_SENd", "HERE");
 
-        Intent intent = new Intent(getApplicationContext(), MapActivity.class);
+        Intent intent = new Intent(getApplicationContext(), MessageActivity.class);
         PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
 
         SmsManager sms = SmsManager.getDefault();
