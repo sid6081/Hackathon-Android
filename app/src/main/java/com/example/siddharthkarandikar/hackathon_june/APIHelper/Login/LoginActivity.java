@@ -48,8 +48,8 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.loginButton);
         notRegisteredTextView = findViewById(R.id.notRegisteredTextView);
 
-        emailEditText.setText("s");
-        passwordEditText.setText("Siddharth");
+//        emailEditText.setText("s");
+//        passwordEditText.setText("Siddharth");
 
         sharedPreferences = getSharedPreferences("Map", MODE_PRIVATE);
         if(sharedPreferences.getBoolean("UserLoggedIn", false)) {
@@ -83,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     retrofit = new Retrofit.Builder()
                             .client(okHttpClient)
-                            .baseUrl("http://192.168.1.8:8005/")
+                            .baseUrl("http://172.0.1.50:8005/")
                             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                             .addConverterFactory(GsonConverterFactory.create())
                             .build();

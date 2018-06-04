@@ -151,7 +151,7 @@ public class Map implements OnMapReadyCallback, LocationListener {
 
         retrofit = new Retrofit.Builder()
                 .client(okHttpClient)
-                .baseUrl("http://192.168.1.8:8005/")
+                .baseUrl("http://172.0.1.50:8005/")
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();

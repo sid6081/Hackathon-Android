@@ -126,7 +126,7 @@ public class MapActivity extends FragmentActivity implements PlaceSelectionListe
         SmsManager sms = SmsManager.getDefault();
 
         //TODO : BRACES : PHONE_NUMBER_HERE
-        sms.sendTextMessage("9886501321", null, "Hi, I have just entered an unsafe area", pi, null);
+        sms.sendTextMessage("9740543019", null, "Hi, I have just entered an unsafe area", pi, null);
     }
 
     private static void requestLocationPermission(Activity activity) {
@@ -209,7 +209,7 @@ public class MapActivity extends FragmentActivity implements PlaceSelectionListe
 
                                     retrofit = new Retrofit.Builder()
                                             .client(okHttpClient)
-                                            .baseUrl("http://192.168.1.8:8005/")
+                                            .baseUrl("http://172.0.1.50:8005/")
                                             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                                             .addConverterFactory(GsonConverterFactory.create())
                                             .build();

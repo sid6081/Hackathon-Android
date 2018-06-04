@@ -45,12 +45,12 @@ public class RegisterActivity extends AppCompatActivity {
         emergencyContactEditText = findViewById(R.id.emergencyContact);
         registerButton = findViewById(R.id.registerButton);
 
-        firstnameEditText.setText("Siddharth");
-        lastnameEditText.setText("Siddharth");
-        emailidEditText.setText("s");
-        passwordEditText.setText("Siddharth");
-        phoneEditText.setText("Siddharth");
-        emergencyContactEditText.setText("Siddharth");
+//        firstnameEditText.setText("Siddharth");
+//        lastnameEditText.setText("Siddharth");
+//        emailidEditText.setText("s");
+//        passwordEditText.setText("Siddharth");
+//        phoneEditText.setText("Siddharth");
+//        emergencyContactEditText.setText("Siddharth");
 
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,7 +75,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                     retrofit = new Retrofit.Builder()
                             .client(okHttpClient)
-                            .baseUrl("http://192.168.1.8:8005/")
+                            .baseUrl("http://172.0.1.50:8005/")
                             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                             .addConverterFactory(GsonConverterFactory.create())
                             .build();
